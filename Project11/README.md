@@ -13,6 +13,16 @@ Skills include:
 - SKPhysicsBody (edgeLoop, Rect, Radius)
 - isDynamic
 - restitution
+- SKAction spin
+- SKAction repeat forever
+- contactTestBitMask
+- collisionBitMask
+- SKPhysicsContactDelegate
+- SKPhysicsContact
+- SKSpriteNode names
+- SKNode
+- remove node from parent
+- SKLabelNode
 
 Challenges completed with my own code are:
 - tbc
