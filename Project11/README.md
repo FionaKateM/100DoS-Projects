@@ -5,6 +5,12 @@ This is days 45 - 47 and involves creating my first Sprite Kit game of the serie
 
 Skills include:
 - Sprite Kit
+- SKSpriteNode
+- Asset catalogue
+- z position
+- image blend mode
+- touches began
+- SKPhysicsBody
 
 Challenges completed with my own code are:
 - tbc
