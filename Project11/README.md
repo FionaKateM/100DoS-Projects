@@ -10,7 +10,9 @@ Skills include:
 - z position
 - image blend mode
 - touches began
-- SKPhysicsBody
+- SKPhysicsBody (edgeLoop, Rect, Radius)
+- isDynamic
+- restitution
 
 Challenges completed with my own code are:
 - tbc
