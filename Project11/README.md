@@ -23,6 +23,14 @@ Skills include:
 - SKNode
 - remove node from parent
 - SKLabelNode
+- SKEmitterNode
+- Radians
+
 
 Challenges completed with my own code are:
-- tbc
+- A random ball color is spawned each time the screen is tapped
+- Forcing the Y value of new balls so they are near the top of the screen
+- Ball count label
+- Imposing a limit of five balls
+- Obstacle boxes removed when they are hit
+- Landing in a green slot gives an additional ball
