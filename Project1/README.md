@@ -11,3 +11,4 @@ Skills include:
 
 Challenges completed with my own code are:
 - Modified so that loading the list of NSSL images from the bundle happens in the background. (Day 40 challenge)
+- Modified so the app remembers, and displsys, the number of times each image is clicked on. (Day 49 challenge)

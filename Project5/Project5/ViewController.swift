@@ -11,9 +11,25 @@ import UIKit
 class ViewController: UITableViewController {
     var allWords = [String]()
     var usedWords = [String]()
+    var currentWord = String()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let defaults = UserDefaults.standard
+        
+        if let savedUsedWords = defaults.object(forKey: "usedWords") as? Data {
+            print("loading used words")
+            let jsonDecoder = JSONDecoder()
+            do {
+                print("used words loaded")
+                let loadedWords = try jsonDecoder.decode([String: [String]].self, from: savedUsedWords)
+                currentWord = loadedWords.keys.first ?? ""
+                usedWords = loadedWords[currentWord] ?? []
+            } catch {
+                print("failed to load used words")
+            }
+        }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptForAnswer))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(startGame))
@@ -21,6 +37,9 @@ class ViewController: UITableViewController {
         if let startWordsURL = Bundle.main.url(forResource:"start", withExtension: "txt") {
             if let startWords = try? String(contentsOf: startWordsURL) {
                 allWords = startWords.components(separatedBy: "\n")
+                if let index = allWords.firstIndex(of: currentWord) {
+                    allWords.remove(at: index)
+                }
             }
         }
         
@@ -28,12 +47,21 @@ class ViewController: UITableViewController {
             allWords = ["silkworm"]
         }
         
-        startGame()
+        if currentWord == "" {
+            startGame()
+        } else {
+            title = currentWord
+            tableView.reloadData()
+        }
     }
+    
 
     @objc func startGame() {
-        title = allWords.randomElement()
+
+        currentWord = allWords.randomElement() ?? ""
         usedWords.removeAll(keepingCapacity: true)
+        save()
+        title = currentWord
         tableView.reloadData()
     }
     
@@ -74,6 +102,7 @@ class ViewController: UITableViewController {
                     usedWords.insert(lowerAnswer, at: 0)
                     let indexPath = IndexPath(row: 0, section: 0)
                     tableView.insertRows(at: [indexPath], with: .automatic)
+                    save()
                     return
                 } else {
                     errorTitle = "Word not recognised"
@@ -122,6 +151,20 @@ class ViewController: UITableViewController {
         let ac = UIAlertController(title: title, message: message, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Ok", style: .default))
         present(ac, animated: true)
+    }
+    
+    func save() {
+        let jsonEncoder = JSONEncoder()
+        let toSave =  [currentWord : usedWords]
+        
+        if let savedWords = try? jsonEncoder.encode(toSave) {
+                let defaults = UserDefaults.standard
+            print("saved used words: \(toSave)")
+                defaults.set(savedWords, forKey: "usedWords")
+            } else {
+                print("failed to save usedwords")
+        }
+        
     }
 
     

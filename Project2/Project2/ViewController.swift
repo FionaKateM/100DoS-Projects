@@ -15,11 +15,23 @@ class ViewController: UIViewController {
     
     var countries = [String]()
     var score = 0
+    var highScore = 0
     var played = 0
     var correctAnswer = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let defaults = UserDefaults.standard
+        
+        if let savedHighScore = defaults.object(forKey: "highScore") as? Data {
+            let jsonDecoder = JSONDecoder()
+            do {
+                highScore = try jsonDecoder.decode(Int.self, from: savedHighScore)
+            } catch {
+                print("failed to load high score")
+            }
+        }
         
         hideScore()
         
@@ -57,27 +69,37 @@ class ViewController: UIViewController {
         
         hideScore()
         
-        var title: String
+        var acTitle: String
         if sender.tag == correctAnswer {
-            title = "Correct"
+            acTitle = "Correct"
             score += 1
             played += 1
             countries.remove(at: correctAnswer)
         } else {
-            title = "Wrong, that's the flag of \(countries[sender.tag])"
+            acTitle = "Wrong, that's the flag of \(countries[sender.tag])"
             score -= 1
             played += 1
             countries.remove(at: correctAnswer)
         }
         
-        let ac = UIAlertController(title: title, message: "Your score is \(score)", preferredStyle: .alert)
+        let ac = UIAlertController(title: acTitle, message: "Your score is \(score)", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Continue", style: .default, handler: askQuestion))
         
-        let finalac = UIAlertController(title: title, message: "Thank you for playing, you scored \(score)", preferredStyle: .alert)
+        let finalac = UIAlertController(title: acTitle, message: "Thank you for playing, you scored \(score)", preferredStyle: .alert)
         finalac.addAction(UIAlertAction(title: "End game", style: .default, handler: resetScore))
         
+        let highScoreac = UIAlertController(title: acTitle, message: "You beat your high score with \(score)", preferredStyle: .alert)
+        highScoreac.addAction(UIAlertAction(title: "End game", style: .default, handler: resetScore))
+        
         if played == 10 {
-            present(finalac, animated: true)
+            if score > highScore {
+                saveHighScore()
+                title = ""
+                present(highScoreac, animated: true)
+            } else {
+                title = ""
+                present(finalac, animated: true)
+            }
         }else{
             present(ac, animated: true)
         }
@@ -90,6 +112,19 @@ class ViewController: UIViewController {
     @objc func hideScore() {
         let button = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(showScore))
         navigationItem.rightBarButtonItem = button
+    }
+    
+    func saveHighScore() {
+        let jsonEncoder = JSONEncoder()
+        if score > highScore {
+            highScore = score
+            if let savedData = try? jsonEncoder.encode(highScore) {
+                let defaults = UserDefaults.standard
+                defaults.set(savedData, forKey: "highScore")
+            } else {
+                print("failed to save high score")
+            }
+        }
     }
 }
 
